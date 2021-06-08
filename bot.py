@@ -80,9 +80,9 @@ class CSClubBot(commands.Bot):
             self.logger.info(f"Directory {directory} does not exist, skipping")
             return
 
-        scripts = [f"{directory}.{p.stem}" for p in path.iterdir() if p.suffix == ".py"]
-        for s in scripts:
-            self.load_module(s)
+        modules = [f"{directory}.{p.stem}" for p in path.iterdir() if p.suffix == ".py"]
+        for m in modules:
+            self.load_module(m)
 
     def run(self, token):
         self.load_dir("core")

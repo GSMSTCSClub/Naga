@@ -11,4 +11,7 @@ prefixes: {}
 # if missing, error will be dumped in the same channel as the command
 error_channels: {}
 
+# server-specific developer/moderator roles
+dev_roles: {}
+
 token_file: "config/token.txt"
