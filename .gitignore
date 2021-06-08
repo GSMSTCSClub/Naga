@@ -1,0 +1,14 @@
+# Workspace folders
+.idea/
+.vscode/
+venv/
+
+# hide the token lol
+config/token.txt
+
+# cache
+__pycache__/
+**/.DS_Store
+
+# data files
+config/config.yml

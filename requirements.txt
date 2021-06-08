@@ -1,0 +1,4 @@
+discord
+PyNaCl
+ruamel.yaml
+requests

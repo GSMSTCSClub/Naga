@@ -1,0 +1,14 @@
+# default prefix if none were set
+default_prefix: "?"
+
+# cs club
+main_server: 319229348181966849
+
+# server-specific prefixes, should only handle cs club, but y'know, just in case
+prefixes: {}
+
+# if errors occur, where in the server should they be dumped to?
+# if missing, error will be dumped in the same channel as the command
+error_channels: {}
+
+token_file: "config/token.txt"
