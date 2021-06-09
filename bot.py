@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 
 import logging
-import shutil
 from pathlib import Path
 from ruamel.yaml import YAML
 
@@ -30,12 +29,17 @@ class CSClubBot(commands.Bot):
 
         yml = YAML(typ='safe')
 
-        # make cfg file if doesn't exist
-        if not CONFIG_PATH.exists():
-            shutil.copy(DEFAULT_CONFIG_PATH, CONFIG_PATH)
-        # load cfg file
-        with open(CONFIG_PATH) as cfg_file:
+        # load default config settings
+        with open(DEFAULT_CONFIG_PATH) as cfg_file:
             self.config = yml.load(cfg_file)
+
+        # load cfg if exists, otherwise save
+        if CONFIG_PATH.exists():
+            with open(CONFIG_PATH) as cfg_file:
+                self.config |= yml.load(cfg_file)
+        else:
+            yml.dump(self.config, CONFIG_PATH)
+
 
         # do rest of init
         am = discord.AllowedMentions.none() # should not ever ping
@@ -88,5 +92,5 @@ if __name__ == '__main__':
 
     # init bot, load token, activate discord
     bot = CSClubBot()
-    token = open(bot.config['token_file'], 'r').read().split('\n')[0]
-    bot.run(token)
+    with open(bot.config['token_file']) as token_file:
+        bot.run(token_file.read().splitlines()[0])
