@@ -1,5 +1,4 @@
-discord
+discord.py
 PyNaCl
 ruamel.yaml
-requests
 GitPython
