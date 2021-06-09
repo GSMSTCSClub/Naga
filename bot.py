@@ -42,15 +42,6 @@ class CSClubBot(commands.Bot):
         intents = discord.Intents.all()
         super().__init__(command_prefix=_get_cmd_prefix, allowed_mentions=am, intents=intents, *args, **kwargs)
 
-    async def notify_devs(self, ctx: commands.Context, exc: Exception):
-        # TODO
-        pass
-
-    # Client events
-    async def on_command_error(self, ctx: commands.Context, exc: Exception):
-        # TODO
-        return await super().on_command_error(ctx, exc)
-
     async def on_ready(self):
         self.logger.info(f'Connected to {self.user}')
         self.logger.info(f'Guilds  : {len(self.guilds)}')
