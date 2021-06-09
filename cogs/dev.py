@@ -44,6 +44,7 @@ class Developer(commands.Cog):
         """
         logger = self.bot.logger
 
+        if "." not in ext: ext = "cogs." + ext
         logger.info("Reloading %s", ext)
         try:
             ctx.bot.reload_extension(ext)
@@ -55,7 +56,7 @@ class Developer(commands.Cog):
         else:
             logger.info("Reloaded %s!", ext)
             print()
-            await ctx.send(f'\N{OK HAND SIGN} Reloaded extension {ext} successfully')
+            await ctx.send(f'\N{OK HAND SIGN} Reloaded extension `{ext}` successfully')
 
     @commands.command()
     async def load(self, ctx, *, ext):
@@ -73,7 +74,7 @@ class Developer(commands.Cog):
         else:            
             logger.info("Loaded %s!", ext)
             print()
-            await ctx.send(f'\N{OK HAND SIGN} **Loaded** extension {ext} successfully')
+            await ctx.send(f'\N{OK HAND SIGN} **Loaded** extension `{ext}` successfully')
 
     @commands.command()
     async def unload(self, ctx, *, ext):
@@ -91,7 +92,7 @@ class Developer(commands.Cog):
         else:
             logger.info("Unloaded %s!", ext)
             print()
-            await ctx.send(f'\N{OK HAND SIGN} **Unloaded** extension {ext} successfully')
+            await ctx.send(f'\N{OK HAND SIGN} **Unloaded** extension `{ext}` successfully')
 
     @reload.command(name='all', invoke_without_command=True)
     async def reload_all(self, ctx):
