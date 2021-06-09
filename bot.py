@@ -56,9 +56,9 @@ class CSClubBot(commands.Bot):
             self.load_extension(module)
         except Exception as e:
             self.logger.exception(f'Failed to load module {module}:')
-            print("")
+            print()
             self.logger.exception(e)
-            print("")
+            print()
         else:
             self.logger.info(f'Loaded module {module}.')
 

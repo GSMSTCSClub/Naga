@@ -4,7 +4,6 @@ from discord.ext import commands
 import git
 import importlib
 import sys
-import traceback
 
 REPO = git.Repo() # this repo
 
@@ -43,16 +42,19 @@ class Developer(commands.Cog):
         """
         Reloads an extension
         """
+        logger = self.bot.logger
+
+        logger.info("Reloading %s", ext)
         try:
             ctx.bot.reload_extension(ext)
         except commands.ExtensionNotLoaded:
             await self.load(ctx, ext=ext)
         except Exception as e:
             await ctx.send(f'Failed to load: `{ext}`\n```py\n{e}\n```')
-            traceback.print_exc()
+            logger.error("Error while reloading %s", ext, exc_info=e)
         else:
-            print("")
-            print("Reloaded!")
+            logger.info("Reloaded %s!", ext)
+            print()
             await ctx.send(f'\N{OK HAND SIGN} Reloaded extension {ext} successfully')
 
     @commands.command()
@@ -60,14 +62,17 @@ class Developer(commands.Cog):
         """
         Loads an extension
         """
+        logger = self.bot.logger
+
+        logger.info("Loading %s", ext)
         try:
             ctx.bot.load_extension(ext)
         except Exception as e:
             await ctx.send(f'Failed to load: `{ext}`\n```py\n{e}\n```')
-            traceback.print_exc()
-        else:
-            print("")
-            print("New load!")
+            logger.error("Error while loading %s", ext, exc_info=e)
+        else:            
+            logger.info("Loaded %s!", ext)
+            print()
             await ctx.send(f'\N{OK HAND SIGN} **Loaded** extension {ext} successfully')
 
     @commands.command()
@@ -75,14 +80,17 @@ class Developer(commands.Cog):
         """
         Unloads an extension
         """
+        logger = self.bot.logger
+
+        logger.info("Unloading %s", ext)
         try:
             ctx.bot.unload_extension(ext)
         except Exception as e:
             await ctx.send(f'Failed to unload: `{ext}`\n```py\n{e}\n```')
-            traceback.print_exc()
+            logger.error("Error while unloading %s", ext, exc_info=e)
         else:
-            print("")
-            print("Unloaded!")
+            logger.info("Unloaded %s!", ext)
+            print()
             await ctx.send(f'\N{OK HAND SIGN} **Unloaded** extension {ext} successfully')
 
     @reload.command(name='all', invoke_without_command=True)
@@ -90,15 +98,20 @@ class Developer(commands.Cog):
         """
         Reloads all extensions
         """
-        importlib.reload(sys.modules['utils'])
 
-        for ext in ctx.bot.extensions:
+        logger = self.bot.logger
+        
+        logger.info("Reloading all extensions")
+        for ext in ctx.bot.extensions.copy():
             try:
+                logger.info("Reloading %s", ext)
                 ctx.bot.reload_extension(ext)
+                logger.info("Reloaded %s!", ext)
             except Exception as e:
                 await ctx.send(f'Failed to load `{ext}`:\n```py\n{e}\n```')
+                logger.error("Error while reloading %s", ext, exc_info=e)
 
-        await ctx.send(f'\N{OK HAND SIGN} Reloaded {len(ctx.bot.extensions)} cogs successfully')
+        await ctx.send(f'\N{OK HAND SIGN} Reloaded {len(ctx.bot.extensions)} extensions successfully')
 
     @commands.command()
     @commands.is_owner()
