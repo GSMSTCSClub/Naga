@@ -57,10 +57,23 @@ async def notify_devs(ctx, exc):
     devids = []
     if hasattr(cmd.callback, 'devids'):
         cmd_devids = cmd.callback.devids
-        devids += [cmd_devids] if isinstance(cmd_devids, int) else cmd_devids
+
+        # if the dev ids var is an int, add it to the list, 
+        # otherwise it's probably an iterable, so just add all elems to the list
+        if isinstance(cmd_devids, int): 
+            devids.append(cmd_devids)
+        else: 
+            devids.extend(cmd_devids)
+
     if hasattr(cog, 'devids'):
         cog_devids = cog.devids
-        devids += [cog_devids] if isinstance(cog_devids, int) else cog_devids
+
+        # if the dev ids var is an int, add it to the list, 
+        # otherwise it's probably an iterable, so just add all elems to the list
+        if isinstance(cog_devids, int): 
+            devids.append(cog_devids)
+        else: 
+            devids.extend(cog_devids)
     
     devids = set(devids)
 
