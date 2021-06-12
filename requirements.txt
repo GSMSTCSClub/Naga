@@ -2,3 +2,4 @@ discord.py
 PyNaCl
 ruamel.yaml
 GitPython
+requests
