@@ -13,6 +13,8 @@ class Example(commands.Cog):
 
     # the init should always have at least a bot parameter.
     # the bot parameter needs to be stored so that the cog can access the bot at all times
+
+    # you can have other parameters and fields here
     def __init__(self, bot):
         self.bot = bot
 
@@ -64,7 +66,7 @@ class Example(commands.Cog):
         """
         Give you a fun fact!
         """
-        choice = self.funfact() # you can call functions from inside the class
+        choice = self.funfact() # you can call functions from inside the class, like normal
         await ctx.send(choice)
 
 
@@ -120,7 +122,7 @@ class Example(commands.Cog):
 
         await ctx.send(message)
     
-    #command: ?flipmsg <long string>
+    # command: ?flipmsg <long string>
     # try:
     #   ?flipmsg hello
     #   ?flipmsg how are you?
@@ -134,7 +136,7 @@ class Example(commands.Cog):
 
         await ctx.send(ctx.author.mention + "\n" + revstr, allowed_mentions=discord.AllowedMentions.none())
 
-    #command: ?addone [num]
+    # command: ?addone [num]
     # try:
     #   ?addone
     #   ?addone 14
