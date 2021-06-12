@@ -153,3 +153,8 @@ class Example(commands.Cog):
 def setup(bot):
     # create an Example cog instance (with bot parameter), and add that instance to the list of bot cogs
     bot.add_cog(Example(bot))
+
+
+
+# Need any more help?
+# See https://discordpy.readthedocs.io/en/stable/ext/commands/commands.html
