@@ -145,6 +145,45 @@ class Example(commands.Cog):
         """
         await ctx.send(f"{num} + 1 = {num + 1}")
 
+    ### SUBCOMMANDS ###
+
+    # If you want subcommands, instead of commands.command, you can use commands.group
+
+    # if invoke_without_command is True, it will only call this command if you didn't call a subcommand
+    # if False (default), it will always call this command first, even if you called a subcommand
+
+    # command: ?random <start> <stop>
+    @commands.group(invoke_without_command=True, aliases=["rand"])
+    async def random(self, ctx, start: float, stop: float):
+        """
+        Get a random decimal number between the two values given
+        """
+
+        await ctx.send(str(random.uniform(start, stop)))
+    
+    # to make a subcommand, you use @<supercommand>.command(), as shown below
+    # acts just like a regular command, but under ?random int rather than ?int
+
+    # command: ?random int <start> <stop>
+    @random.command(name="int")
+    async def random_int(self, ctx, start: int, stop: int):
+        """
+        Get a random integer between the two values given (inclusive)
+        """
+
+        MIN_VALUE = -9007199254740991
+        MAX_VALUE = 9007199254740992
+
+        left, right = min(start, stop), max(start, stop)
+        if left < MIN_VALUE:
+            raise commands.BadArgument(f"Lower value is too small. It should be greater than {MIN_VALUE}.")
+        elif right > MAX_VALUE:
+            raise commands.BadArgument(f"Greater value is too big. It should be greater than {MAX_VALUE}.")
+
+        await ctx.send(str(random.randint(left, right)))
+
+
+
 
 # this function is OUTSIDE of the class
 # this is important because d.py needs to know what to do when it reads this script
