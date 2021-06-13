@@ -1,7 +1,7 @@
 # this cog is an example of how cogs should be set up
 
 # imports, these two should always be imported, there may be more here (sometimes much more) 
-# if you're using a lot of libraries. feel free to ask @Endr#2382 to install a library!
+# if you're using a lot of libraries. feel free to ask to install a library!
 import discord
 from discord.ext import commands
 
