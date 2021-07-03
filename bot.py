@@ -5,7 +5,7 @@ import logging
 from pathlib import Path
 from ruamel.yaml import YAML
 
-def _get_cmd_prefix(bot: commands.Bot, msg: discord.Message) -> tuple[str]:
+def _get_cmd_prefix(bot: commands.Bot, msg: discord.Message) -> "tuple[str]":
     """
     Gets the command prefix based off the guild of the message
     """
@@ -36,7 +36,7 @@ class CSClubBot(commands.Bot):
         # load cfg if exists, otherwise save
         if CONFIG_PATH.exists():
             with open(CONFIG_PATH) as cfg_file:
-                self.config |= yml.load(cfg_file)
+                self.config.update(yml.load(cfg_file))
         else:
             yml.dump(self.config, CONFIG_PATH)
 

@@ -68,7 +68,7 @@ class CSClubBotHelp(commands.MinimalHelpCommand):
         fmt = '`{0}` {1}' if command.short_doc else '`{}`'
         self.paginator.add_line(fmt.format(ctext, command.short_doc))
 
-    def add_subcommand_list(self, cmds: Collection[commands.Command]):
+    def add_subcommand_list(self, cmds: "Collection[commands.Command]"):
         """
         Adds a formatted list of subcommands to the paginator
         """
@@ -81,7 +81,7 @@ class CSClubBotHelp(commands.MinimalHelpCommand):
 
     ### CATEGORY UTIL ###
 
-    def get_categories(self) -> set[str]:
+    def get_categories(self) -> "set[str]":
         """
         List of every category name out of the registered cogs in the bot.
         """
@@ -96,7 +96,7 @@ class CSClubBotHelp(commands.MinimalHelpCommand):
         if hasattr(cog, "HELP_CATEGORY"): return cog.HELP_CATEGORY
         else: return cog.qualified_name
 
-    def cogs_in_category(self, cat: str) -> tuple[commands.Cog]:
+    def cogs_in_category(self, cat: str) -> "tuple[commands.Cog]":
         """
         Gets all registered cogs that have the specified category name
         """
@@ -105,7 +105,7 @@ class CSClubBotHelp(commands.MinimalHelpCommand):
 
     ### AUTHOR UTIL ###
 
-    def get_authors(self, c: "commands.Command | commands.Cog") -> tuple[discord.User]:
+    def get_authors(self, c: "commands.Command | commands.Cog") -> "tuple[discord.User]":
         authors = []
 
         if isinstance(c, commands.Cog):
