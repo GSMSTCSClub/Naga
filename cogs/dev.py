@@ -8,6 +8,7 @@ import sys
 REPO = git.Repo() # this repo
 
 class Developer(commands.Cog):
+    AUTHORS = (141294044671246337, )
 
     def __init__(self, bot):
         self.bot = bot
@@ -118,10 +119,10 @@ class Developer(commands.Cog):
     @commands.is_owner()
     async def die(self, ctx):
         """
-        Kill the bot and restarts it. For real it kills the bot don't spam this please
+        Kills the bot and restarts it. For real it kills the bot don't spam this please
         """
         await ctx.send(r"\*pop\*")
-        await self.bot.logout()
+        await self.bot.close()
 
     @commands.command()
     async def version(self, ctx):
@@ -142,13 +143,6 @@ class Developer(commands.Cog):
         Causes an error.
         """
         raise Exception(f"{ctx.prefix}crash induced error")
-
-    @commands.command()
-    async def kill(self, ctx):
-        """
-        Kills bot
-        """
-        await self.bot.close()
 
 def setup(bot):
     bot.add_cog(Developer(bot))
