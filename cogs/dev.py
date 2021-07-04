@@ -136,5 +136,19 @@ class Developer(commands.Cog):
 
         await ctx.send("\n".join(lines))
     
+    @commands.command()
+    async def crash(self, ctx):
+        """
+        Causes an error.
+        """
+        raise Exception(f"{ctx.prefix}crash induced error")
+
+    @commands.command()
+    async def kill(self, ctx):
+        """
+        Kills bot
+        """
+        await self.bot.close()
+
 def setup(bot):
     bot.add_cog(Developer(bot))
