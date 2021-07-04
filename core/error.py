@@ -84,11 +84,11 @@ async def notify_devs(ctx, exc):
     devs = []
     for devid in devids:
         dev = await ctx.bot.fetch_user(devid)
-        if dev is not None: devs.append(dev.name)
+        if dev is not None: devs.append(dev.mention)
     
     if devs:
         insert = "one of " if len(devs) > 1 else ""
-        await ctx.send(f'{simple_info}. You should probably inform {insert}{", ".join(devs)}.', file=exc_file)
+        await ctx.send(f'{simple_info}. You should probably inform {insert}{", ".join(devs)}.', file=exc_file, allowed_mentions=discord.AllowedMentions.none())
     else:
         await ctx.send(f'{simple_info}, but I couldn\'t find the creator of this command.', file=exc_file)
 
