@@ -179,8 +179,23 @@ class Poll(commands.Cog):
             except: pass
         
     @commands.group(invoke_without_command=True, aliases=["polls"],
-        help=add_aliases("""\
+        help=add_aliases(f"""\
         Create a poll.
+        `]poll <all emojis that you want in poll, no spaces> [content]`
+
+        Examples
+        - `]poll \U0001F641\U0001F642 How is your day?`
+        - `]poll ABC Best letter?`
+        - `]poll 0-10 How many dogs do you have?`
+        - `]poll ynm Am I cool?`
+
+        Aliases
+        `ynm  =` {EMO_MAP['y']}{EMO_MAP['n']}{EMO_MAP['m']}
+        `A-Z  =` {EMO_MAP['A']}-{EMO_MAP['Z']}
+        `0-10 =` {EMO_MAP['0']}-{EMO_MAP['10']}
+        `+    =` {EMO_MAP['+']}
+        `?    =` {EMO_MAP['?']}
+        `!    =` {EMO_MAP['!']}
         """)
     )
     async def poll(self, ctx, reactions, *, content=''):
@@ -191,6 +206,15 @@ class Poll(commands.Cog):
     @poll.command(name="lines",
         help=add_aliases("""\
         Create a poll. The emotes on each line are used as the reactions.
+
+        Example
+        ```
+        ]poll lines Favorite season?
+        \U0001F338 Spring
+        \u2600\uFE0F Summer
+        \U0001F342 Fall
+        \u2744\uFE0F Winter
+        ```
         """)
     )
     async def poll_lines(self, ctx, *, content=""):
