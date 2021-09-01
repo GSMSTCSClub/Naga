@@ -163,11 +163,6 @@ class Poll(commands.Cog):
         rxns = list(dict.fromkeys(rxns))
         return rxns
 
-    async def create_poll_msg(self, ctx, rxns, content, more_msgs = True):
-        if content.strip() == "": content = BLANK_TEXT
-        msg = await ctx.send(content)
-        await self.send_rxns(rxns, msg, more_msgs)
-
     @staticmethod
     async def send_rxns(rxns, msg: discord.Message = None, more_msgs=True):
         chan = msg.channel
@@ -191,7 +186,7 @@ class Poll(commands.Cog):
     async def poll(self, ctx, reactions, *, content=''):
         msg = ctx.message
         rxns = self.parse_emoji_str(reactions, message=msg)
-        await self.create_poll_msg(ctx, rxns, content)
+        await self.send_rxns(rxns, msg)
 
     @poll.command(name="lines",
         help=add_aliases("""\
@@ -203,7 +198,7 @@ class Poll(commands.Cog):
         msgstr = "\n".join(content.strip().splitlines())
 
         rxns = self.parse_emoji_str(msgstr, regex=LINE_REGEX, message=msg)
-        await self.create_poll_msg(ctx, rxns, content)
+        await self.send_rxns(rxns, msg)
 
 def setup(bot):
     bot.add_cog(Poll(bot))
