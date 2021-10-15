@@ -2,10 +2,19 @@ import discord
 from discord.ext import commands
 
 import git
-import importlib
 import sys
+from enum import IntEnum
+from itertools import groupby, chain
 
 REPO = git.Repo() # this repo
+
+class ExtStatus(IntEnum):
+    LOAD_SUCCESS = 0,
+    LOAD_FAIL = 1,
+    RELOAD_SUCCESS = 2,
+    RELOAD_FAIL = 3,
+    UNLOAD_SUCCESS = 4,
+    UNLOAD_FAIL = 5
 
 class Developer(commands.Cog):
     AUTHORS = (141294044671246337, )
@@ -38,62 +47,142 @@ class Developer(commands.Cog):
         if ext:
             await self.reload(ctx, ext=ext)
 
-    @commands.group(invoke_without_command=True)
-    async def reload(self, ctx, *, ext):
-        """
-        Reloads an extension
-        """
+    async def reload_ext(self, ext) -> "tuple[ExtStatus, str, Exception | None]":
         logger = self.bot.logger
-
+        
         if "." not in ext: ext = "cogs." + ext
         logger.info("Reloading %s", ext)
         try:
-            ctx.bot.reload_extension(ext)
+            self.bot.reload_extension(ext)
         except commands.ExtensionNotLoaded:
-            await self.load(ctx, ext=ext)
+            return await self.load_ext(ext)
         except Exception as e:
-            await ctx.send(f'Failed to load: `{ext}`\n```py\n{e}\n```')
             logger.error("Error while reloading %s", ext, exc_info=e)
-        else:
-            logger.info("Reloaded %s!", ext)
-            print()
-            await ctx.send(f'\N{OK HAND SIGN} Reloaded extension `{ext}` successfully')
+            return (ExtStatus.RELOAD_FAIL, ext, e)
 
-    @commands.command()
-    async def load(self, ctx, *, ext):
-        """
-        Loads an extension
-        """
+        logger.info("Reloaded %s!", ext)
+        return (ExtStatus.RELOAD_SUCCESS, ext, None)
+
+    async def load_ext(self, ext) -> "tuple[ExtStatus, str, Exception | None]":
         logger = self.bot.logger
-
+        
+        if "." not in ext: ext = "cogs." + ext
         logger.info("Loading %s", ext)
         try:
-            ctx.bot.load_extension(ext)
+            self.bot.load_extension(ext)
         except Exception as e:
-            await ctx.send(f'Failed to load: `{ext}`\n```py\n{e}\n```')
             logger.error("Error while loading %s", ext, exc_info=e)
-        else:            
-            logger.info("Loaded %s!", ext)
-            print()
-            await ctx.send(f'\N{OK HAND SIGN} **Loaded** extension `{ext}` successfully')
+            return (ExtStatus.LOAD_FAIL, ext, e)
 
-    @commands.command()
-    async def unload(self, ctx, *, ext):
-        """
-        Unloads an extension
-        """
+        logger.info("Loaded %s!", ext)
+        return (ExtStatus.LOAD_SUCCESS, ext, None)
+    
+    async def unload_ext(self, ext) -> "tuple[ExtStatus, str, Exception | None]":
         logger = self.bot.logger
 
+        if "." not in ext: ext = "cogs." + ext
         logger.info("Unloading %s", ext)
         try:
-            ctx.bot.unload_extension(ext)
+            self.bot.unload_extension(ext)
         except Exception as e:
-            await ctx.send(f'Failed to unload: `{ext}`\n```py\n{e}\n```')
             logger.error("Error while unloading %s", ext, exc_info=e)
-        else:
-            logger.info("Unloaded %s!", ext)
-            print()
-            await ctx.send(f'\N{OK HAND SIGN} **Unloaded** extension `{ext}` successfully')
+            return (ExtStatus.UNLOAD_FAIL, ext, e)
+
+        logger.info("Unloaded %s!", ext)
+        return (ExtStatus.UNLOAD_SUCCESS, ext, None)
+
+    @commands.group(invoke_without_command=True)
+    async def reload(self, ctx, *ext):
+        """
+        Reloads extensions
+        """
+
+        attempts = [await self.reload_ext(e) for e in ext]
+        attempts = sorted(attempts, key=lambda t: t[0])
+        statuses = dict((k, tuple(g)) for k, g in groupby(attempts, key=lambda t: t[0]))
+        rs, rf, ls, lf = \
+            statuses.get(ExtStatus.RELOAD_SUCCESS, ()),\
+            statuses.get(ExtStatus.RELOAD_FAIL, ()),\
+            statuses.get(ExtStatus.LOAD_SUCCESS, ()),\
+            statuses.get(ExtStatus.LOAD_FAIL, ())
+
+        msg_lines = []
+        if len(rs) > 0: msg_lines.append(
+            '\N{OK HAND SIGN} Reloaded extension{} {} successfully'.format(
+                "s" if len(rs) != 1 else "",
+                ", ".join(f"`{name}`" for _, name, _ in rs)
+            )
+        )
+        if len(ls) > 0: msg_lines.append(
+            '\N{OK HAND SIGN} Loaded extension{} {} successfully'.format(
+                "s" if len(ls) != 1 else "",
+                ", ".join(f"`{name}`" for _, name, _ in ls)
+            )
+        )
+
+        if len(msg_lines) > 0: msg_lines.append("")
+
+        for _, name, e in chain(rf, lf):
+            msg_lines.append(f"Failed to load: `{name}`\n```py\n{e}\n```")
+
+        await ctx.send('\n'.join(msg_lines))
+
+    @commands.command()
+    async def load(self, ctx, *ext):
+        """
+        Loads extensions
+        """
+
+        attempts = [await self.load_ext(e) for e in ext]
+        attempts = sorted(attempts, key=lambda t: t[0])
+        statuses = dict((k, tuple(g)) for k, g in groupby(attempts, key=lambda t: t[0]))
+
+        ls, lf = \
+            statuses.get(ExtStatus.LOAD_SUCCESS, ()),\
+            statuses.get(ExtStatus.LOAD_FAIL, ())
+
+        msg_lines = []
+        if len(ls) > 0: msg_lines.append(
+            '\N{OK HAND SIGN} Loaded extension{} {} successfully'.format(
+                "s" if len(ls) != 1 else "",
+                ", ".join(f"`{name}`" for _, name, _ in ls)
+            )
+        )
+
+        if len(msg_lines) > 0: msg_lines.append("")
+
+        for _, name, e in lf:
+            msg_lines.append(f"Failed to load: `{name}`\n```py\n{e}\n```")
+
+        await ctx.send('\n'.join(msg_lines))
+
+    @commands.command()
+    async def unload(self, ctx, *ext):
+        """
+        Unloads extensions
+        """
+
+        attempts = [await self.unload_ext(e) for e in ext]
+        attempts = sorted(attempts, key=lambda t: t[0])
+        statuses = dict((k, tuple(g)) for k, g in groupby(attempts, key=lambda t: t[0]))
+        us, uf = \
+            statuses.get(ExtStatus.UNLOAD_SUCCESS, ()),\
+            statuses.get(ExtStatus.UNLOAD_FAIL, ())
+
+        msg_lines = []
+        if len(us) > 0: msg_lines.append(
+            '\N{OK HAND SIGN} Unloaded extension{} {} successfully'.format(
+                "s" if len(us) != 1 else "",
+                ", ".join(f"`{name}`" for _, name, _ in us)
+            )
+        )
+
+        if len(msg_lines) > 0: msg_lines.append("")
+
+        for _, name, e in uf:
+            msg_lines.append(f"Failed to unload: `{name}`\n```py\n{e}\n```")
+
+        await ctx.send('\n'.join(msg_lines))
 
     @reload.command(name='all', invoke_without_command=True)
     async def reload_all(self, ctx):
@@ -101,19 +190,7 @@ class Developer(commands.Cog):
         Reloads all extensions
         """
 
-        logger = self.bot.logger
-        
-        logger.info("Reloading all extensions")
-        for ext in ctx.bot.extensions.copy():
-            try:
-                logger.info("Reloading %s", ext)
-                ctx.bot.reload_extension(ext)
-                logger.info("Reloaded %s!", ext)
-            except Exception as e:
-                await ctx.send(f'Failed to load `{ext}`:\n```py\n{e}\n```')
-                logger.error("Error while reloading %s", ext, exc_info=e)
-
-        await ctx.send(f'\N{OK HAND SIGN} Reloaded {len(ctx.bot.extensions)} extensions successfully')
+        return await self.reload(ctx, *ctx.bot.extensions)
 
     @commands.command()
     @commands.is_owner()
