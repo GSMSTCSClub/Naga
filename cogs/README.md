@@ -1,5 +1,5 @@
 # Cogs
 
-This folder is for all the commands.
+This folder has all of the commands.
 
-It's called cogs because each of the scripts in this folder should contain 1 "cog", which is a category class that contains several commands.
+Commands are stored in classes called *cogs*. Each script in this class contains a cog, which can be thought of as a category class that contains several commands.
