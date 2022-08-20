@@ -53,7 +53,7 @@ class Developer(commands.Cog):
         if "." not in ext: ext = "cogs." + ext
         logger.info("Reloading %s", ext)
         try:
-            self.bot.reload_extension(ext)
+            await self.bot.reload_extension(ext)
         except commands.ExtensionNotLoaded:
             return await self.load_ext(ext)
         except Exception as e:
@@ -69,7 +69,7 @@ class Developer(commands.Cog):
         if "." not in ext: ext = "cogs." + ext
         logger.info("Loading %s", ext)
         try:
-            self.bot.load_extension(ext)
+            await self.bot.load_extension(ext)
         except Exception as e:
             logger.error("Error while loading %s", ext, exc_info=e)
             return (ExtStatus.LOAD_FAIL, ext, e)
@@ -83,7 +83,7 @@ class Developer(commands.Cog):
         if "." not in ext: ext = "cogs." + ext
         logger.info("Unloading %s", ext)
         try:
-            self.bot.unload_extension(ext)
+            await self.bot.unload_extension(ext)
         except Exception as e:
             logger.error("Error while unloading %s", ext, exc_info=e)
             return (ExtStatus.UNLOAD_FAIL, ext, e)
@@ -221,5 +221,5 @@ class Developer(commands.Cog):
         """
         raise Exception(f"{ctx.prefix}crash induced error")
 
-def setup(bot):
-    bot.add_cog(Developer(bot))
+async def setup(bot):
+    await bot.add_cog(Developer(bot))

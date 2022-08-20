@@ -92,5 +92,5 @@ async def notify_devs(ctx, exc):
     else:
         await ctx.send(f'{simple_info}, but I couldn\'t find the creator of this command.', file=exc_file)
 
-def setup(bot: commands.Bot):
+async def setup(bot: commands.Bot):
     bot.add_listener(on_command_error)

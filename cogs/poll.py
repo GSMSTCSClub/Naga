@@ -224,5 +224,5 @@ class Poll(commands.Cog):
         rxns = self.parse_emoji_str(msgstr, regex=LINE_REGEX, message=msg)
         await self.send_rxns(rxns, msg)
 
-def setup(bot):
-    bot.add_cog(Poll(bot))
+async def setup(bot):
+    await bot.add_cog(Poll(bot))

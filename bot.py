@@ -52,12 +52,12 @@ class CSClubBot(commands.Bot):
         self.logger.info(f'Users   : {len(set(self.get_all_members()))}')
         self.logger.info(f'Channels: {len(list(self.get_all_channels()))}')
 
-    def load_module(self, module: str):
+    async def load_module(self, module: str):
         """
         Loads a module
         """
         try:
-            self.load_extension(module)
+            await self.load_extension(module)
         except Exception as e:
             self.logger.exception(f'Failed to load module {module}:')
             print()
@@ -66,7 +66,7 @@ class CSClubBot(commands.Bot):
         else:
             self.logger.info(f'Loaded module {module}.')
 
-    def load_dir(self, directory: str):
+    async def load_dir(self, directory: str):
         """
         Loads all modules in a directory
         """
@@ -77,14 +77,14 @@ class CSClubBot(commands.Bot):
 
         modules = [f"{directory}.{p.stem}" for p in path.iterdir() if p.suffix == ".py"]
         for m in modules:
-            self.load_module(m)
+            await self.load_module(m)
 
-    def run(self, token):
-        self.load_dir("core")
-        self.load_dir("cogs")
+    async def start(self, token: str, *, reconnect: bool = True) -> None:
+        await self.load_dir("core")
+        await self.load_dir("cogs")
 
         self.logger.info(f'Loaded {len(self.cogs)} cogs')
-        super().run(token)
+        return await super().start(token, reconnect=reconnect)
 
 # this code is ran if this py script is called in terminal
 # python3 bot.py

@@ -267,8 +267,8 @@ class Help(commands.Cog):
     HELP_CATEGORY = "Misc"
     AUTHORS = (141294044671246337,)
 
-def setup(bot):
+async def setup(bot):
     helpcog = Help()
-    bot.add_cog(helpcog)
+    await bot.add_cog(helpcog)
     bot.help_command = CSClubBotHelp()
     bot.help_command.cog = helpcog

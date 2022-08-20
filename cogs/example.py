@@ -191,9 +191,9 @@ class Example(commands.Cog):
 # this is important because d.py needs to know what to do when it reads this script
 
 # this is the simplest cog setup, you may add more if something else needs to happen when this script is loaded
-def setup(bot):
+async def setup(bot):
     # create an Example cog instance (with bot parameter), and add that instance to the list of bot cogs
-    bot.add_cog(Example(bot))
+    await bot.add_cog(Example(bot))
 
 
 
