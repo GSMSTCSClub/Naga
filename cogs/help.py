@@ -25,7 +25,7 @@ class CSClubBotHelp(commands.MinimalHelpCommand):
     def get_ending_note(self):
         return '`{0}{1} <command>` for in-depth help for a command\n' \
                '`{0}{1} <category>` for commands in a category\n' \
-               .format(self.clean_prefix, self.invoked_with)
+               .format(self.context.clean_prefix, self.invoked_with)
 
     def add_ending_note(self):
         note = self.get_ending_note()
@@ -64,7 +64,7 @@ class CSClubBotHelp(commands.MinimalHelpCommand):
 
     def add_subcommand_formatting(self, command, cell=0):
         # formats commands within groups (cmds w/ subcommands) or categories
-        ctext = f"{self.clean_prefix}{command}".ljust(cell)
+        ctext = f"{self.context.clean_prefix}{command}".ljust(cell)
         fmt = '`{0}` {1}' if command.short_doc else '`{}`'
         self.paginator.add_line(fmt.format(ctext, command.short_doc))
 
@@ -131,7 +131,7 @@ class CSClubBotHelp(commands.MinimalHelpCommand):
         self.paginator.add_line()
         self.paginator.add_line("**Usage:**")
         # main signature
-        self.paginator.add_line(f"`{self.clean_prefix}{command} {command.signature}`") # TODO reimpl custom defined signatures in a clean way
+        self.paginator.add_line(f"`{self.context.clean_prefix}{command} {command.signature}`") # TODO reimpl custom defined signatures in a clean way
         # any subcommands if they exist
         # ordered by how they're defined within the cog class itself
         if isinstance(command, commands.Group):
@@ -143,9 +143,9 @@ class CSClubBotHelp(commands.MinimalHelpCommand):
         for alias in command.aliases:
             parent = command.full_parent_name
             if parent:
-                aliases.append(f"{self.clean_prefix}{parent} {alias}")
+                aliases.append(f"{self.context.clean_prefix}{parent} {alias}")
             else:
-                aliases.append(f"{self.clean_prefix}{alias}")
+                aliases.append(f"{self.context.clean_prefix}{alias}")
         if aliases:
             self.paginator.add_line(f"**Aliases:** {', '.join(map(discord.utils.escape_markdown, aliases))}", empty=True)
         
@@ -163,7 +163,7 @@ class CSClubBotHelp(commands.MinimalHelpCommand):
         """
         parent = command.full_parent_name
         full_cmd = command.name if not parent else parent + ' ' + command.name
-        self.paginator.add_line(f"Help for `{self.clean_prefix}{full_cmd}`:")
+        self.paginator.add_line(f"Help for `{self.context.clean_prefix}{full_cmd}`:")
 
     def add_description(self, c: "commands.Command | commands.Cog"):
         """
