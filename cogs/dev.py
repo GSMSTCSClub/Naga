@@ -23,21 +23,22 @@ class Developer(commands.Cog):
         self.bot = bot
 
     async def cog_check(self, ctx):
-        # if member has a developer role
-        roles = self.bot.config["dev_roles"].get(ctx.guild.id)
-        if roles is not None and any(r.id in roles for r in ctx.author.roles):
-            return True
+        if ctx.guild is not None:
+            # if member has a developer role
+            roles = self.bot.config["dev_roles"].get(ctx.guild.id, None)
+            if roles is not None and any(r.id in roles for r in ctx.author.roles):
+                return True
 
-        # if member has manage role or admin
-        perms: discord.Permissions = ctx.author.guild_permissions
-        if perms.manage_roles or perms.administrator:
-            return True
+            # if member has manage role or admin
+            perms: discord.Permissions = ctx.author.guild_permissions
+            if perms.manage_roles or perms.administrator:
+                return True
 
         # if member is the bot creator
         return await self.bot.is_owner(ctx.author)
 
     @commands.command(aliases=['git_pull'])
-    async def update(self, ctx, *, ext=None):
+    async def update(self, ctx, *ext):
         """
         Updates the bot from the GitHub repo
         """
@@ -45,7 +46,7 @@ class Developer(commands.Cog):
         await ctx.send(':warning: Warning! Pulling from Git!')
         await ctx.send(f'`Git` response: ```diff\n{REPO.git.pull()}```')
         if ext:
-            await self.reload(ctx, ext=ext)
+            await self.reload(ctx, *ext)
 
     async def reload_ext(self, ext) -> "tuple[ExtStatus, str, Exception | None]":
         logger = self.bot.logger
